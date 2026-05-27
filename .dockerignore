@@ -1,0 +1,14 @@
+target/
+*.jar
+*.war
+
+spa/node_modules/
+spa/dist/
+
+data/
+*.db
+*.mv.db
+
+*.log
+.idea/
+.vscode/

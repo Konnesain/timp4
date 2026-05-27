@@ -1,0 +1,90 @@
+import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
+import NotificationToast from './components/NotificationToast';
+import EmployeeList from './components/EmployeeList';
+import EmployeeForm from './components/EmployeeForm';
+import EmployeeDetails from './components/EmployeeDetails';
+import BuildingDetails from './components/BuildingDetails';
+import BuildingForm from './components/BuildingForm';
+import BuildingMap from './components/BuildingMap';
+import LogList from './components/LogList';
+import Login from './components/Login';
+import Register from './components/Register';
+import SensorList from './components/SensorList';
+import RoadForm from './components/RoadForm';
+import FireAccessForm from './components/FireAccessForm';
+
+function AppHeader() {
+  const { user, logout } = useAuth();
+  if (!user) return null;
+
+  return (
+    <header className="app-header">
+      <Link to="/buildings" className="app-title">Система управления</Link>
+      <nav className="app-nav">
+        <Link to="/buildings">Карта</Link>
+        <Link to="/employees">Сотрудники</Link>
+        <Link to="/logs">Журнал событий</Link>
+        <Link to="/sensors">Датчики</Link>
+        <span className="user-info">{user.username}</span>
+        <button onClick={logout} className="btn btn-small btn-danger" style={{marginLeft: '0.5rem'}}>
+          Выйти
+        </button>
+      </nav>
+    </header>
+  );
+}
+
+function AppRoutes() {
+  const { user } = useAuth();
+
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<Login />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <Routes>
+      <Route path="/login" element={<Navigate to="/buildings" replace />} />
+      <Route path="/" element={<Navigate to="/buildings" replace />} />
+      <Route path="/buildings" element={<BuildingMap />} />
+      <Route path="/employees" element={<EmployeeList />} />
+      <Route path="/employees/add" element={<EmployeeForm />} />
+      <Route path="/employees/:id" element={<EmployeeDetails />} />
+      <Route path="/employees/:id/edit" element={<EmployeeForm />} />
+      <Route path="/buildings/:id" element={<BuildingDetails />} />
+      <Route path="/buildings/add" element={<BuildingForm />} />
+      <Route path="/buildings/:id/edit" element={<BuildingForm />} />
+      <Route path="/roads/:id/edit" element={<RoadForm />} />
+      <Route path="/fire-access/:id/edit" element={<FireAccessForm />} />
+      <Route path="/logs" element={<LogList />} />
+      <Route path="/sensors" element={<SensorList />} />
+    </Routes>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <NotificationProvider>
+          <div className="app">
+            <AppHeader />
+            <main className="app-content">
+              <AppRoutes />
+            </main>
+            <NotificationToast />
+          </div>
+        </NotificationProvider>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
+
+export default App;
