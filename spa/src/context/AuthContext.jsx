@@ -39,7 +39,7 @@ export async function authFetch(url, options = {}) {
 
   let response = await fetch(url, { ...options, headers });
 
-  if (response.status === 401 && token) {
+  if ((response.status === 401 || response.status === 403) && token) {
     const refreshed = await tryRefresh();
     if (refreshed) {
       const newToken = localStorage.getItem('authToken');
