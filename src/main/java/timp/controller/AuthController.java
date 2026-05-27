@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -41,6 +45,11 @@ public class AuthController {
         this.accessCookieMaxAge = (int) (accessExpiration / 1000);
     }
 
+    @Operation(summary = "Аутентификация пользователя", description = "Возвращает access и refresh токены, устанавливает HttpOnly cookie")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Успешный вход"),
+        @ApiResponse(responseCode = "401", description = "Неверный логин или пароль")
+    })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String username,
                                    @RequestParam String password,
@@ -65,6 +74,11 @@ public class AuthController {
         ));
     }
 
+    @Operation(summary = "Регистрация пользователя")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Пользователь создан и аутентифицирован"),
+        @ApiResponse(responseCode = "400", description = "Ошибка валидации (пустое имя, короткий пароль, дубликат)")
+    })
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestParam String username,
                                       @RequestParam String password,
@@ -96,6 +110,11 @@ public class AuthController {
         ));
     }
 
+    @Operation(summary = "Обновление access токена", description = "Принимает refresh токен, возвращает новую пару токенов")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Токены обновлены"),
+        @ApiResponse(responseCode = "401", description = "Недействительный или истёкший refresh token")
+    })
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestParam String refreshToken,
                                      HttpServletResponse response) {
@@ -115,6 +134,10 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Выход из системы")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Все refresh токены пользователя отозваны, cookie очищена")
+    })
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestParam String refreshToken,
                                     HttpServletResponse response) {
