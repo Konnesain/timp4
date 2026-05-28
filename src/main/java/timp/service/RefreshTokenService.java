@@ -49,4 +49,11 @@ public class RefreshTokenService {
     public void revokeAllForUser(String username) {
         repository.deleteByUsername(username);
     }
+
+    @Transactional
+    public void revokeByToken(String rawToken) {
+        repository.findByToken(rawToken).ifPresent(rt ->
+                repository.deleteByUsername(rt.getUsername())
+        );
+    }
 }

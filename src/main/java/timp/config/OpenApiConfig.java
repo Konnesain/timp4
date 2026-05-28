@@ -28,21 +28,21 @@ public class OpenApiConfig {
                         .title("Employee Management REST API")
                         .version("1.0.0"))
                 .components(new Components()
-                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")
-                                .description("Вставьте JWT access token, полученный при login/register/refresh")));
+                        .addSecuritySchemes("cookieAuth", new SecurityScheme()
+                                .type(SecurityScheme.Type.APIKEY)
+                                .in(SecurityScheme.In.COOKIE)
+                                .name("jwt_token")
+                                .description("JWT access token в HttpOnly cookie (устанавливается при login/register/refresh)")));
     }
 
     @Bean
-    OperationCustomizer addBearerAuth() {
+    OperationCustomizer addCookieAuth() {
         return (operation, handlerMethod) -> {
             Class<?> controllerClass = handlerMethod.getBeanType();
             if (controllerClass == timp.controller.AuthController.class || controllerClass == timp.controller.SensorController.class) {
                 return operation;
             }
-            operation.addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
+            operation.addSecurityItem(new SecurityRequirement().addList("cookieAuth"));
             return operation;
         };
     }
