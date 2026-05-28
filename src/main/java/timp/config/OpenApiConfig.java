@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.method.HandlerMethod;
 
 import jakarta.validation.Valid;
 import java.util.Arrays;
@@ -90,6 +89,13 @@ public class OpenApiConfig {
             if (isSensor && methodName.equals("receiveReading") && responses.get("404") == null) {
                 responses.addApiResponse("404",
                         new ApiResponse().description("Not Found – датчик не найден"));
+            }
+
+            boolean isAuth = ct == timp.controller.AuthController.class;
+
+            if (!isAuth && !isSensor && responses.get("401") == null) {
+                responses.addApiResponse("401",
+                        new ApiResponse().description("Unauthorized – отсутствует или истёк JWT в cookie jwt_token"));
             }
 
             if (responses.get("500") == null) {
