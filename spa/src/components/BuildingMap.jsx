@@ -666,13 +666,13 @@ function BuildingMap() {
           <div
             className="map-tooltip"
             style={{
-              left: (hoveredBuilding?.positionX ?? hoveredRoad?.positionX ?? hoveredFireAccess?.positionX ?? 0) + (hoveredBuilding?.width ?? hoveredRoad?.width ?? hoveredFireAccess?.width ?? 0) / 2,
-              top: (hoveredBuilding?.positionY ?? hoveredRoad?.positionY ?? hoveredFireAccess?.positionY ?? 0) - 10,
+              left: (hoveredBuilding?.positionX ?? hoveredRoad?.positionX ?? hoveredFireAccess?.positionX ?? 0) + (hoveredBuilding?.width ?? hoveredRoad?.width ?? hoveredFireAccess?.width ?? 0) / 2 - viewBox.x,
+              top: (hoveredBuilding?.positionY ?? hoveredRoad?.positionY ?? hoveredFireAccess?.positionY ?? 0) - 10 - viewBox.y,
             }}
           >
             {hoveredBuilding?.name && <strong>{hoveredBuilding.name}</strong>}
             {hoveredRoad?.name && <strong>{hoveredRoad.name}</strong>}
-            {hoveredFireAccess && <strong>Пожарный подъезд</strong>}
+            {hoveredFireAccess && <strong>Пожарный подъезд N{hoveredFireAccess.id}</strong>}
             {(hoveredBuilding?.description || hoveredRoad?.description) && (
               <div className="tooltip-desc">{hoveredBuilding?.description || hoveredRoad?.description}</div>
             )}

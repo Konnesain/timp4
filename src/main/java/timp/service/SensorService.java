@@ -86,16 +86,22 @@ public class SensorService {
         } else {
             newStatus = Building.Status.OK;
         }
-
-        buildingService.updateStatus(sensor.getBuilding().getId(), newStatus);
+        
+        if(sensor.getBuilding().getStatus() != newStatus)
+        {
+            buildingService.updateStatus(sensor.getBuilding().getId(), newStatus);
+            if(newStatus == Building.Status.CRITICAL) {
+                openFireAccessesForBuilding(sensor.getBuilding().getId());
+            } else if(newStatus == Building.Status.OK) {
+                closeFireAccessesForBuilding(sensor.getBuilding().getId());
+                notificationService.resetAlert(sensor.getBuilding().getId());
+            }
+        }
 
         if (saved.getValue() != null && saved.getValue() > CRITICAL_TEMPERATURE) {
             String sensorInfo = sensor.getName() + ": " + String.format("%.1f°C", sensor.getValue());
             notificationService.sendCriticalAlert(sensor.getBuilding().getId(), sensor.getBuilding().getName(), sensorInfo);
-            openFireAccessesForBuilding(sensor.getBuilding().getId());
-        } else if (newStatus == Building.Status.OK) {
-            closeFireAccessesForBuilding(sensor.getBuilding().getId());
-            notificationService.resetAlert(sensor.getBuilding().getId());
+            
         }
     }
 

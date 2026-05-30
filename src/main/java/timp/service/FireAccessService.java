@@ -71,6 +71,13 @@ public class FireAccessService {
         fireAccessRepository.deleteById(id);
     }
 
+    public void setOpen(Long id, boolean open) {
+        FireAccess fa = fireAccessRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пожарный подъезд не найден: " + id));
+        fa.setOpen(open);
+        fireAccessRepository.save(fa);
+    }
+
     private void saveBuildingLinks(Long fireAccessId, List<Long> buildingIds) {
         if (buildingIds == null || buildingIds.isEmpty()) return;
 
