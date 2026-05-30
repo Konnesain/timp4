@@ -22,8 +22,7 @@ public class EmailNotificationService {
 
     @Async
     public void sendEmailAlert(Long buildingId, String buildingName, String sensorInfo) {
-        /*
-        List<String> emails = userRepository.findAll().stream()
+                List<String> emails = userRepository.findAll().stream()
                 .map(User::getEmail)
                 .filter(email -> email != null && !email.isBlank())
                 .toList();
@@ -38,6 +37,6 @@ public class EmailNotificationService {
             mailSender.send(message);
         } catch (Exception e) {
             System.err.println("Failed to send email notification: " + e.getMessage());
-        }*/
+        }
     }
 }
