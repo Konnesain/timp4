@@ -15,7 +15,7 @@ function NotificationToast() {
             <strong>{notification.title || 'КРИТИЧЕСКАЯ ТЕМПЕРАТУРА'}</strong>
             <button
               className="notification-close"
-              onClick={() => dismissNotification(notification.id)}
+              onClick={() => dismissNotification(notification.id, notification.buildingId)}
             >
               ×
             </button>
@@ -32,7 +32,7 @@ function NotificationToast() {
               <button
                 className="notification-action"
                 onClick={() => {
-                  dismissNotification(notification.id);
+                  dismissNotification(notification.id, notification.buildingId);
                   navigate('/buildings');
                 }}
               >

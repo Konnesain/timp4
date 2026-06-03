@@ -8,19 +8,32 @@ export const useNotification = () => useContext(NotificationContext);
 
 export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
+  const [dismissedBuildings, setDismissedBuildings] = useState(new Set());
   const { user } = useAuth();
   const location = useLocation();
 
-  const dismissNotification = useCallback((id) => {
+  useEffect(() => {
+    if (location.pathname === '/buildings') {
+      setDismissedBuildings(new Set());
+    }
+  }, [location.pathname]);
+
+  const dismissNotification = useCallback((id, buildingId) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
+    if (buildingId != null) {
+      setDismissedBuildings(prev => new Set(prev).add(buildingId));
+    }
   }, []);
 
   const addNotification = useCallback((notification) => {
+    if (notification.buildingId != null && dismissedBuildings.has(notification.buildingId)) {
+      return null;
+    }
     const n = { id: Date.now() + Math.random(), ...notification };
     setNotifications(prev => [...prev, n]);
-    setTimeout(() => dismissNotification(n.id), 10000);
+    setTimeout(() => setNotifications(prev => prev.filter(x => x.id !== n.id)), 10000);
     return n;
-  }, [dismissNotification]);
+  }, [dismissedBuildings]);
 
   useEffect(() => {
     if (!user) return;
