@@ -4,14 +4,15 @@ import timp.model.RefreshToken;
 import timp.model.User;
 import timp.repository.UserRepository;
 import timp.config.JwtUtil;
+import timp.service.CustomUserDetailsService;
 import timp.service.RefreshTokenService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+    private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final int accessCookieMaxAge;
@@ -37,14 +38,14 @@ public class AuthController {
 
     public AuthController(UserRepository userRepository,
                           PasswordEncoder passwordEncoder,
-                          AuthenticationManager authenticationManager,
+                          CustomUserDetailsService userDetailsService,
                           JwtUtil jwtUtil,
                           RefreshTokenService refreshTokenService,
                           @Value("${jwt.access-expiration}") long accessExpiration,
                           @Value("${jwt.refresh-expiration}") long refreshExpiration) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
         this.accessCookieMaxAge = (int) (accessExpiration / 1000);
@@ -60,11 +61,14 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestParam String username,
                                    @RequestParam String password,
                                    HttpServletResponse response) {
+        UserDetails userDetails;
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
-            );
-        } catch (Exception e) {
+            userDetails = userDetailsService.loadUserByUsername(username);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(401)
+                    .body(Map.of("message", "Неверный логин или пароль", "success", false));
+        }
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             return ResponseEntity.status(401)
                     .body(Map.of("message", "Неверный логин или пароль", "success", false));
         }
@@ -95,6 +99,10 @@ public class AuthController {
         if (password == null || password.length() < 6) {
             return ResponseEntity.badRequest()
                     .body(Map.of("message", "Пароль должен содержать минимум 6 символов", "success", false));
+        }
+        if (username.trim().length() > 255) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Имя пользователя не должно превышать 255 символов", "success", false));
         }
         if (userRepository.findByUsername(username.trim()).isPresent()) {
             return ResponseEntity.badRequest()

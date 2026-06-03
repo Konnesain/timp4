@@ -12,11 +12,11 @@ public class Employee {
     private Long id;
 
     @NotBlank(message = "Name is required")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String name;
 
     @NotBlank(message = "Position is required")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String position;
 
     @Column(name = "building_id")

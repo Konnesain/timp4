@@ -1,10 +1,12 @@
 package timp.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class BuildingRequest {
 
     @NotBlank(message = "Name is required")
+    @Size(max = 255)
     private String name;
     private Integer positionX = 0;
     private Integer positionY = 0;

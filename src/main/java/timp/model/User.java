@@ -12,14 +12,14 @@ public class User {
     private Long id;
 
     @NotBlank(message = "Username is required")
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 255)
     private String username;
 
     @NotBlank(message = "Password is required")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 255)
     private String email;
 
     public User() { }

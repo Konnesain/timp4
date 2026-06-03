@@ -34,8 +34,9 @@ database.dat
 *.mv.db
 *.trace.db
 
-# Mail credentials
+# properties
 src/main/resources/mail.properties
+src/main/resources/jwt.properties
 
 # Logs
 *.log

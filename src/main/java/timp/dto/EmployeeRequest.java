@@ -7,11 +7,11 @@ import java.util.List;
 public class EmployeeRequest {
 
     @NotBlank(message = "Name is required")
-    @Size(max = 100)
+    @Size(max = 255)
     private String name;
 
     @NotBlank(message = "Position is required")
-    @Size(max = 100)
+    @Size(max = 255)
     private String position;
 
     private List<Long> buildingAccessIds;

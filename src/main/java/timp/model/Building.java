@@ -16,7 +16,7 @@ public class Building {
     private Long id;
 
     @NotBlank(message = "Name is required")
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 255)
     private String name;
 
     @Column(name = "position_x")
@@ -31,7 +31,7 @@ public class Building {
     @Column(name = "building_height")
     private Integer height = 100;
 
-    @Column(name = "description", length = 500)
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Enumerated(EnumType.STRING)

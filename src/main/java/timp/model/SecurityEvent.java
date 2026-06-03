@@ -29,11 +29,14 @@ public class SecurityEvent {
     private Long id;
 
     private int userId;
+
+    @Column(length = 255)
     private String userName;
 
     @Enumerated(EnumType.STRING)
     private EventType type;
 
+    @Column(columnDefinition = "TEXT")
     private String details;
 
     private LocalDateTime timestamp;

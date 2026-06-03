@@ -10,6 +10,7 @@ public class Road {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 255)
     private String name;
 
     @Column(name = "position_x")
@@ -24,7 +25,7 @@ public class Road {
 
     private Double angle = 0.0;
 
-    @Column(length = 500)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     public Road() { }

@@ -23,7 +23,7 @@ public class Sensor {
     @JoinColumn(name = "building_id", nullable = false)
     private Building building;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String name;
 
     @Column(name = "last_seen")
