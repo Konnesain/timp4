@@ -33,10 +33,16 @@ function cspPlugin() {
   };
 }
 
+import fs from 'fs';
+
 export default defineConfig({
   plugins: [react(), cspPlugin()],
   server: {
     port: 2000,
+    https: {
+      key: fs.readFileSync('server.key'),
+      cert: fs.readFileSync('server.crt'),
+    },
     proxy: {
       '/api': {
         target: apiTarget,
@@ -46,6 +52,10 @@ export default defineConfig({
   },
   preview: {
     port: 2000,
+    https: {
+      key: fs.readFileSync('server.key'),
+      cert: fs.readFileSync('server.crt'),
+    },
     proxy: {
       '/api': {
         target: apiTarget,
