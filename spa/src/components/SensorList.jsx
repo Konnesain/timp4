@@ -20,9 +20,23 @@ function SensorList() {
   };
 
   useEffect(() => {
-    loadSensors(true);
-    const interval = setInterval(() => loadSensors(false), 1000);
-    return () => clearInterval(interval);
+    let timer;
+    let active = true;
+
+    const poll = async () => {
+      if (!active) return;
+      await loadSensors(false);
+      if (active) timer = setTimeout(poll, 3000);
+    };
+
+    loadSensors(true).then(() => {
+      if (active) timer = setTimeout(poll, 3000);
+    });
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
   }, []);
 
   const formatLastSeen = (lastSeen) => {

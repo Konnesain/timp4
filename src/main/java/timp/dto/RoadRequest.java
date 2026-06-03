@@ -5,8 +5,8 @@ import jakarta.validation.constraints.Size;
 
 public class RoadRequest {
 
-    @NotBlank(message = "Name is required")
-    @Size(max = 255)
+    @NotBlank(message = "Название обязательно")
+    @Size(max = 255, message = "Название не должно превышать 255 символов")
     private String name;
 
     private Integer positionX = 0;

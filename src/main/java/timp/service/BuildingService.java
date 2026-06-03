@@ -7,6 +7,7 @@ import timp.dto.EmployeeInfo;
 import timp.model.Building;
 import timp.model.Employee;
 import timp.model.EmployeeBuildingAccess;
+import timp.model.Sensor;
 import timp.repository.BuildingRepository;
 import timp.repository.EmployeeBuildingAccessRepository;
 import timp.repository.EmployeeRepository;
@@ -102,6 +103,10 @@ public class BuildingService {
         building.setWidth(request.getWidth());
         building.setHeight(request.getHeight());
         Building saved = buildingRepository.save(building);
+
+        Sensor sensor = new Sensor(saved, "Датчик температуры: " + saved.getName(), Sensor.SensorType.TEMPERATURE);
+        sensorRepository.save(sensor);
+
         eventLogger.logBuildingCreate(building.getName());
         return toResponse(saved);
     }

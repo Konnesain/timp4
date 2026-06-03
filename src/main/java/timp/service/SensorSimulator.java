@@ -4,8 +4,6 @@ import timp.dto.SensorValueRequest;
 import timp.model.Sensor;
 import timp.model.Sensor.SensorType;
 import timp.repository.SensorRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SensorSimulator {
 
-    private static final Logger log = LoggerFactory.getLogger(SensorSimulator.class);
     private static final double BASE_TEMPERATURE = 22.0;
     private static final double TEMPERATURE_VARIANCE = 2.0;
     private static final double CRITICAL_TEMPERATURE = 50.0;
@@ -37,7 +34,6 @@ public class SensorSimulator {
                 .filter(s -> s.getType() == SensorType.TEMPERATURE)
                 .toList();
         sensors.forEach(s -> criticalSensorIds.add(s.getId()));
-        log.info("Ignited {} temperature sensors", criticalSensorIds.size());
     }
 
     public void extinguishBuilding(Long buildingId) {
@@ -45,7 +41,6 @@ public class SensorSimulator {
                 .filter(s -> s.getType() == SensorType.TEMPERATURE)
                 .toList();
         sensors.forEach(s -> criticalSensorIds.remove(s.getId()));
-        log.info("Extinguished building {}", buildingId);
     }
 
     public boolean isCritical(Long sensorId) {

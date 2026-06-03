@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 public class SensorValueRequest {
 
-    @NotNull(message = "Value is required")
+    @NotNull(message = "Значение обязательно")
     private Double value;
 
     public SensorValueRequest(Double value)

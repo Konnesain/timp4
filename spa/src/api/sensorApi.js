@@ -8,7 +8,14 @@ async function apiFetch(url, options = {}) {
   if (!response.ok) {
     const text = await response.text();
     let message = response.statusText;
-    try { message = JSON.parse(text).error || JSON.parse(text).message || message; } catch {}
+    try {
+      const data = JSON.parse(text);
+      if (data.messages) {
+        message = Object.values(data.messages).join('; ');
+      } else {
+        message = data.error || data.message || message;
+      }
+    } catch {}
     throw new Error(message);
   }
 

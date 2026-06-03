@@ -6,12 +6,12 @@ import java.util.List;
 
 public class EmployeeRequest {
 
-    @NotBlank(message = "Name is required")
-    @Size(max = 255)
+    @NotBlank(message = "Имя обязательно")
+    @Size(max = 255, message = "Имя не должно превышать 255 символов")
     private String name;
 
-    @NotBlank(message = "Position is required")
-    @Size(max = 255)
+    @NotBlank(message = "Должность обязательна")
+    @Size(max = 255, message = "Должность не должна превышать 255 символов")
     private String position;
 
     private List<Long> buildingAccessIds;
