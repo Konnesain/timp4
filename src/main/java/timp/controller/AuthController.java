@@ -1,11 +1,13 @@
 package timp.controller;
 
 import timp.model.RefreshToken;
+import timp.model.SecurityEvent;
 import timp.model.User;
 import timp.repository.UserRepository;
 import timp.config.JwtUtil;
 import timp.service.CustomUserDetailsService;
 import timp.service.RefreshTokenService;
+import timp.service.SecurityEventLogger;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,6 +35,7 @@ public class AuthController {
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final SecurityEventLogger eventLogger;
     private final int accessCookieMaxAge;
     private final int refreshCookieMaxAge;
 
@@ -41,6 +44,7 @@ public class AuthController {
                           CustomUserDetailsService userDetailsService,
                           JwtUtil jwtUtil,
                           RefreshTokenService refreshTokenService,
+                          SecurityEventLogger eventLogger,
                           @Value("${jwt.access-expiration}") long accessExpiration,
                           @Value("${jwt.refresh-expiration}") long refreshExpiration) {
         this.userRepository = userRepository;
@@ -48,6 +52,7 @@ public class AuthController {
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
+        this.eventLogger = eventLogger;
         this.accessCookieMaxAge = (int) (accessExpiration / 1000);
         this.refreshCookieMaxAge = (int) (refreshExpiration / 1000);
     }
@@ -65,13 +70,23 @@ public class AuthController {
         try {
             userDetails = userDetailsService.loadUserByUsername(username);
         } catch (UsernameNotFoundException e) {
+            eventLogger.log(SecurityEvent.EventType.AUTH_FAILED,
+                    "Неверный логин или пароль: " + username, false, -1, username);
             return ResponseEntity.status(401)
                     .body(Map.of("message", "Неверный логин или пароль", "success", false));
         }
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+            eventLogger.log(SecurityEvent.EventType.AUTH_FAILED,
+                    "Неверный логин или пароль: " + username, false, -1, username);
             return ResponseEntity.status(401)
                     .body(Map.of("message", "Неверный логин или пароль", "success", false));
         }
+
+        int userId = userRepository.findByUsername(username)
+                .map(u -> u.getId().intValue())
+                .orElse(0);
+        eventLogger.log(SecurityEvent.EventType.AUTH_LOGIN,
+                "Успешный вход: " + username, true, userId, username);
 
         String accessToken = jwtUtil.generateAccessToken(username);
         RefreshToken rt = refreshTokenService.createRefreshToken(username);
@@ -111,6 +126,7 @@ public class AuthController {
 
         User user = new User(username.trim(), passwordEncoder.encode(password));
         userRepository.save(user);
+        eventLogger.logRegistration(user.getUsername(), user.getId().intValue());
 
         String accessToken = jwtUtil.generateAccessToken(user.getUsername());
         RefreshToken rt = refreshTokenService.createRefreshToken(user.getUsername());

@@ -20,10 +20,14 @@ public class FireAccessService {
 
     private final FireAccessRepository fireAccessRepository;
     private final FireAccessBuildingRepository fireAccessBuildingRepository;
+    private final SecurityEventLogger eventLogger;
 
-    public FireAccessService(FireAccessRepository fireAccessRepository, FireAccessBuildingRepository fireAccessBuildingRepository) {
+    public FireAccessService(FireAccessRepository fireAccessRepository,
+                             FireAccessBuildingRepository fireAccessBuildingRepository,
+                             SecurityEventLogger eventLogger) {
         this.fireAccessRepository = fireAccessRepository;
         this.fireAccessBuildingRepository = fireAccessBuildingRepository;
+        this.eventLogger = eventLogger;
     }
 
     @Transactional(readOnly = true)
@@ -45,6 +49,7 @@ public class FireAccessService {
 
         saveBuildingLinks(saved.getId(), request.getBuildingIds());
 
+        eventLogger.logFireAccessCreate(saved.getId());
         return toResponse(saved);
     }
 
@@ -60,6 +65,7 @@ public class FireAccessService {
 
         saveBuildingLinks(id, request.getBuildingIds());
 
+        eventLogger.logFireAccessEdit(id);
         return toResponse(saved);
     }
 
@@ -67,6 +73,7 @@ public class FireAccessService {
         if (!fireAccessRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пожарный подъезд не найден: " + id);
         }
+        eventLogger.logFireAccessDelete(id);
         fireAccessBuildingRepository.deleteByFireAccessId(id);
         fireAccessRepository.deleteById(id);
     }

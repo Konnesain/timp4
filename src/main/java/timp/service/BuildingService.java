@@ -53,8 +53,6 @@ public class BuildingService {
     public BuildingDetailsResponse getBuildingById(Long id) {
         Building building = buildingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Здание не найдено: " + id));
-        eventLogger.logBuildingView(building.getName());
-
         List<Employee> employeesInside = employeeRepository.findAll().stream()
                 .filter(e -> id.equals(e.getBuildingId()))
                 .collect(Collectors.toList());

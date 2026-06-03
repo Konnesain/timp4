@@ -37,7 +37,6 @@ public class EmployeeService {
 
     @Transactional(readOnly = true)
     public List<EmployeeResponse> getAllEmployees() {
-        eventLogger.logEmployeeRequest();
         return employeeRepository.findAll()
                 .stream()
                 .map(this::toResponse)
@@ -48,7 +47,6 @@ public class EmployeeService {
     public EmployeeResponse getEmployeeById(Long id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Сотрудник не найден: " + id));
-        eventLogger.logEmployeeView(id, employee.getName());
         return toResponse(employee);
     }
 

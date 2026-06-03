@@ -17,9 +17,11 @@ import java.util.stream.Collectors;
 public class RoadService {
 
     private final RoadRepository roadRepository;
+    private final SecurityEventLogger eventLogger;
 
-    public RoadService(RoadRepository roadRepository) {
+    public RoadService(RoadRepository roadRepository, SecurityEventLogger eventLogger) {
         this.roadRepository = roadRepository;
+        this.eventLogger = eventLogger;
     }
 
     @Transactional(readOnly = true)
@@ -39,6 +41,7 @@ public class RoadService {
         road.setAngle(request.getAngle());
         road.setDescription(request.getDescription());
         Road saved = roadRepository.save(road);
+        eventLogger.logRoadCreate(saved.getName());
         return toResponse(saved);
     }
 
@@ -53,13 +56,14 @@ public class RoadService {
         road.setAngle(request.getAngle());
         road.setDescription(request.getDescription());
         Road saved = roadRepository.save(road);
+        eventLogger.logRoadEdit(saved.getName());
         return toResponse(saved);
     }
 
     public void deleteRoad(Long id) {
-        if (!roadRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Дорога не найдена: " + id);
-        }
+        Road road = roadRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Дорога не найдена: " + id));
+        eventLogger.logRoadDelete(road.getName());
         roadRepository.deleteById(id);
     }
 

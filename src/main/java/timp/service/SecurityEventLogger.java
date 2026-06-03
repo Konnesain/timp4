@@ -3,9 +3,6 @@ package timp.service;
 import timp.model.SecurityEvent;
 import timp.repository.SecurityEventRepository;
 import timp.util.SecurityUtil;
-import org.springframework.context.event.EventListener;
-import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
-import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,22 +45,6 @@ public class SecurityEventLogger {
         securityEventRepository.save(event);
     }
 
-    @EventListener
-    public void onAuthenticationSuccess(AuthenticationSuccessEvent event) {
-        String username = event.getAuthentication().getName();
-        log(SecurityEvent.EventType.AUTH_LOGIN, "Успешный вход: " + username, true, 0, username);
-    }
-
-    @EventListener
-    public void onAuthenticationFailure(AuthenticationFailureBadCredentialsEvent event) {
-        String username = event.getAuthentication().getName();
-        log(SecurityEvent.EventType.AUTH_FAILED, "Неверный логин или пароль: " + username, false, 0, username);
-    }
-
-    public void logBuildingView(String buildingName) {
-        log(SecurityEvent.EventType.BUILDING_VIEW, "Просмотр здания: " + buildingName, true);
-    }
-
     public void logBuildingEdit(String buildingName) {
         log(SecurityEvent.EventType.BUILDING_EDIT, "Редактирование здания: " + buildingName, true);
     }
@@ -74,14 +55,6 @@ public class SecurityEventLogger {
 
     public void logBuildingDelete(String buildingName) {
         log(SecurityEvent.EventType.BUILDING_DELETE, "Удаление здания: " + buildingName, true);
-    }
-    
-    public void logEmployeeRequest() {
-        log(SecurityEvent.EventType.EMPLOYEE_REQUEST, "Запрос списка сотрудников", true);
-    }
-
-    public void logEmployeeView(Long employeeId, String employeeName) {
-        log(SecurityEvent.EventType.EMPLOYEE_REQUEST, "Просмотр сотрудника: " + employeeName + " (ID: " + employeeId + ")", true);
     }
 
     public void logEmployeeCreate(String employeeName, Long employeeId, String position) {
@@ -95,5 +68,33 @@ public class SecurityEventLogger {
 
     public void logEmployeeDelete(Long employeeId, String employeeName) {
         log(SecurityEvent.EventType.EMPLOYEE_DELETE, "Удалён сотрудник: " + employeeName + " (ID: " + employeeId + ")", true);
+    }
+
+    public void logRoadCreate(String roadName) {
+        log(SecurityEvent.EventType.ROAD_CREATE, "Создание дороги: " + roadName, true);
+    }
+
+    public void logRoadEdit(String roadName) {
+        log(SecurityEvent.EventType.ROAD_EDIT, "Редактирование дороги: " + roadName, true);
+    }
+
+    public void logRoadDelete(String roadName) {
+        log(SecurityEvent.EventType.ROAD_DELETE, "Удаление дороги: " + roadName, true);
+    }
+
+    public void logFireAccessCreate(Long id) {
+        log(SecurityEvent.EventType.FIRE_ACCESS_CREATE, "Создание пожарного подъезда (ID: " + id + ")", true);
+    }
+
+    public void logFireAccessEdit(Long id) {
+        log(SecurityEvent.EventType.FIRE_ACCESS_EDIT, "Редактирование пожарного подъезда (ID: " + id + ")", true);
+    }
+
+    public void logFireAccessDelete(Long id) {
+        log(SecurityEvent.EventType.FIRE_ACCESS_DELETE, "Удаление пожарного подъезда (ID: " + id + ")", true);
+    }
+
+    public void logRegistration(String username, int userId) {
+        log(SecurityEvent.EventType.REGISTRATION, "Регистрация: " + username, true, userId, username);
     }
 }

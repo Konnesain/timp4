@@ -9,13 +9,18 @@ public class SecurityEvent {
 
     public enum EventType {
         EMPLOYEE_EDIT("Изменение сотрудника"),
-        EMPLOYEE_REQUEST("Запрос списка сотрудников"),
-        BUILDING_VIEW("Просмотр здания"),
         BUILDING_EDIT("Редактирование здания"),
         BUILDING_CREATE("Создание здания"),
         BUILDING_DELETE("Удаление здания"),
         EMPLOYEE_CREATE("Создание сотрудника"),
         EMPLOYEE_DELETE("Удаление сотрудника"),
+        ROAD_CREATE("Создание дороги"),
+        ROAD_EDIT("Редактирование дороги"),
+        ROAD_DELETE("Удаление дороги"),
+        FIRE_ACCESS_CREATE("Создание пожарного подъезда"),
+        FIRE_ACCESS_EDIT("Редактирование пожарного подъезда"),
+        FIRE_ACCESS_DELETE("Удаление пожарного подъезда"),
+        REGISTRATION("Регистрация"),
         AUTH_LOGIN("Вход в систему"),
         AUTH_FAILED("Неудачная попытка входа");
 
