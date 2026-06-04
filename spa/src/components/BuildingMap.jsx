@@ -492,7 +492,7 @@ function BuildingMap() {
               <g
                 key={road.id}
                 className={`map-road ${isHovered ? 'hovered' : ''}`}
-                onClick={(e) => e.stopPropagation()}
+                onClick={() => navigate(`/roads/${road.id}/edit`)}
                 onMouseEnter={() => setHoveredRoad(road)}
                 onMouseLeave={() => setHoveredRoad(null)}
                 onContextMenu={(e) => handleContextMenu(e, road, 'road')}
@@ -535,7 +535,7 @@ function BuildingMap() {
               <g
                 key={fa.id}
                 className={`map-fire-access ${isHovered ? 'hovered' : ''}`}
-                onClick={(e) => e.stopPropagation()}
+                onClick={() => navigate(`/fire-access/${fa.id}/edit`)}
                 onMouseEnter={() => setHoveredFireAccess(fa)}
                 onMouseLeave={() => setHoveredFireAccess(null)}
                 onContextMenu={(e) => handleContextMenu(e, fa, 'fireAccess')}
@@ -696,7 +696,9 @@ function BuildingMap() {
             {hoveredFireAccess && (
               <div className="tooltip-status">Статус: {hoveredFireAccess.open ? 'Открыт' : 'Закрыт'}</div>
             )}
-            <div className="tooltip-hint">Нажмите для просмотра</div>
+            <div className="tooltip-hint">
+              {hoveredBuilding ? 'Нажмите для просмотра' : 'Нажмите для редактирования'}
+            </div>
           </div>
         )}
       </div>

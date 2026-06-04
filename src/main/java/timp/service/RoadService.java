@@ -48,6 +48,7 @@ public class RoadService {
     public RoadResponse updateRoad(Long id, RoadRequest request) {
         Road road = roadRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Дорога не найдена: " + id));
+        String oldname = road.getName();
         road.setName(request.getName());
         road.setPositionX(request.getPositionX());
         road.setPositionY(request.getPositionY());
@@ -56,7 +57,7 @@ public class RoadService {
         road.setAngle(request.getAngle());
         road.setDescription(request.getDescription());
         Road saved = roadRepository.save(road);
-        eventLogger.logRoadEdit(saved.getName());
+        eventLogger.logRoadEdit(oldname);
         return toResponse(saved);
     }
 
