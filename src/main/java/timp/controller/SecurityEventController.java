@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,6 +23,7 @@ public class SecurityEventController {
         this.securityEventService = securityEventService;
     }
 
+    @Operation(summary = "Постраничное получение журнала событий")
     @GetMapping
     public ResponseEntity<Page<SecurityEventResponse>> getEvents(
             @RequestParam(defaultValue = "0") int page,
@@ -31,6 +34,7 @@ public class SecurityEventController {
         return ResponseEntity.ok(events);
     }
 
+    @Operation(summary = "Получение типов событий")
     @GetMapping("/types")
     public ResponseEntity<EventTypeResponse> getEventTypes() {
         Map<String, String> types = new LinkedHashMap<>();

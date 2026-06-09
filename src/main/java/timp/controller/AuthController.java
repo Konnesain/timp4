@@ -139,7 +139,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Обновление access токена", description = "Читает refresh_token из HttpOnly cookie, устанавливает новые jwt_token и refresh_token",
-               parameters = { @Parameter(in = ParameterIn.COOKIE, name = "refresh_token", description = "Refresh токен (устанавливается при login/register)", required = true) })
+               parameters = { @Parameter(in = ParameterIn.COOKIE, name = "refresh_token", required = true) })
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Токены обновлены"),
         @ApiResponse(responseCode = "401", description = "Недействительный или истёкший refresh token")

@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 import java.util.List;
 
 @RestController
@@ -26,16 +28,19 @@ public class SensorController {
         this.sensorSimulator = sensorSimulator;
     }
 
+    @Operation(summary = "Получение информации о всех датчиках")
     @GetMapping
     public ResponseEntity<List<SensorResponse>> getAllSensors() {
         return ResponseEntity.ok(sensorService.getAllSensors());
     }
 
+    @Operation(summary = "Получение информации о датчиках в здании")
     @GetMapping("/building/{buildingId}")
     public ResponseEntity<List<SensorResponse>> getSensorsByBuilding(@PathVariable Long buildingId) {
         return ResponseEntity.ok(sensorService.getSensorsByBuilding(buildingId));
     }
 
+    @Operation(summary = "Отправка показаний датчика")
     @PostMapping("/{id}/readings")
     public ResponseEntity<SensorResponse> receiveReading(
             @PathVariable Long id,
@@ -47,6 +52,7 @@ public class SensorController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Перевод датчиков в здании в критическое состояние")
     @PostMapping("/ignite/{buildingId}")
     public ResponseEntity<List<SensorResponse>> igniteBuilding(@PathVariable Long buildingId) {
         sensorSimulator.igniteBuilding(buildingId);
@@ -56,6 +62,7 @@ public class SensorController {
                 .toList());
     }
 
+    @Operation(summary = "Перевод датчиков в здании в нормальное состояние")
     @PostMapping("/extinguish/{buildingId}")
     public ResponseEntity<List<SensorResponse>> extinguishBuilding(@PathVariable Long buildingId) {
         sensorSimulator.extinguishBuilding(buildingId);
